@@ -124,6 +124,12 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
         <SidebarGroup>
+          <SidebarGroupLabel>Tinajero Studios 3D </SidebarGroupLabel>
+          <SidebarGroupLabel>
+            Workspace ID: acde070d-8c4c-4f0d-9d8a-162843c10333{' '}
+          </SidebarGroupLabel>
+        </SidebarGroup>
+        <SidebarGroup>
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
@@ -244,21 +250,21 @@ export default function AppSidebar() {
 
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <BadgeCheck />
+                    <BadgeCheck className="mr-2 size-4" />
                     Account
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <CreditCard />
+                    <CreditCard className="mr-2 size-4" />
                     Billing
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <Bell />
+                    <Bell className="mr-2 size-4" />
                     Notifications
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <LogOut />
+                  <LogOut className="mr-2 size-4" />
                   Log out
                 </DropdownMenuItem>
               </DropdownMenuContent>
