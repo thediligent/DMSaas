@@ -34,9 +34,10 @@ import {
   BadgeCheck,
   Bell,
   ChevronRight,
+  Plus,
   ChevronsUpDown,
   CreditCard,
-  GalleryVerticalEnd,
+  GalleryHorizontalEnd,
   LogOut
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
@@ -44,11 +45,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+import { DmsLogo } from '@/components/DmsLogo';
 
 export const company = {
-  name: 'Acme Inc',
-  logo: GalleryVerticalEnd,
-  plan: 'Enterprise'
+  name: 'DMS',
+  logo: DmsLogo
 };
 
 export default function AppSidebar() {
@@ -58,15 +59,68 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <div className="flex gap-2 py-2 text-sidebar-accent-foreground ">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-            <company.logo className="size-4" />
-          </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{company.name}</span>
-            <span className="truncate text-xs">{company.plan}</span>
-          </div>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="gap-lg-2 p-lg-2 flex w-full items-center text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <company.logo />
+              </div>
+              <div className="collapse-hide grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate pl-2">
+                  <h1 className="text-2xl font-black">{company.name}</h1>
+                </span>
+              </div>
+              <ChevronsUpDown className="collapse-hide size-4 pl-1" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side="bottom"
+            align="start"
+            sideOffset={4}
+          >
+            <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
+              Pinned Workspaces
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              Diligent Marketing Solutions
+              <span className="ml-auto text-xs tracking-widest opacity-60">
+                ⌘1
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              Daniel Tinajero
+              <span className="ml-auto text-xs tracking-widest opacity-60">
+                ⌘2
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              Tinajero Studios 3D
+              <span className="ml-auto text-xs tracking-widest opacity-60">
+                ⌘3
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              View Workspaces
+              <span className="ml-auto text-xs tracking-widest opacity-60">
+                ⌘+home
+              </span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
+                <Plus className="size-4" />
+              </div>
+              <div className="ml-3 font-medium text-muted-foreground">
+                Create Workspace
+              </div>
+              <span className="ml-auto text-xs tracking-widest opacity-60">
+                w
+              </span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
         <SidebarGroup>

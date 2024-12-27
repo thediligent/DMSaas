@@ -12,5 +12,12 @@
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils"
+  },
+  "style": {
+    "global": {
+      "css": {
+        "fontFamily": "Manrope, sans-serif"
+      }
+    }
   }
 }
