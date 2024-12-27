@@ -1,37 +1,32 @@
-import { auth } from '@/auth';
 import Providers from '@/components/layout/providers';
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
-import { Lato } from 'next/font/google';
+import { createClient } from '@/utils/supabase/server';
 import NextTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'Diligent Marketing Engine',
+  description: 'Launch your efforts with DME'
 };
-
-const lato = Lato({
-  subsets: ['latin'],
-  weight: ['400', '700', '900'],
-  display: 'swap'
-});
-
 export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  let session;
+  try {
+    const { data } = await supabase.auth.getSession();
+    session = data.session;
+  } catch (error) {
+    console.error('Error fetching session:', error);
+  }
+
   return (
-    <html
-      lang="en"
-      className={`${lato.className}`}
-      suppressHydrationWarning={true}
-    >
+    <html lang="en" suppressHydrationWarning={true}>
       <body className={'overflow-hidden'}>
         <NextTopLoader showSpinner={false} />
-        <Providers session={session}>
+        <Providers>
           <Toaster />
           {children}
         </Providers>
