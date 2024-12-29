@@ -1,6 +1,6 @@
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
-import { createClient } from '@/utils/supabase/client';
+import { getSupabaseClient } from '@/utils/supabase/client';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -18,7 +18,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
+  const supabase = getSupabaseClient();
   let session = null;
   try {
     const { data, error } = await supabase.auth.getSession();

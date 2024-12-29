@@ -1,7 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import ProtectedRoute from '@/components/ProtectedRoute';
+// import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default async function WorkspaceLayout({
   children,
@@ -45,5 +45,6 @@ export default async function WorkspaceLayout({
     redirect('/403');
   }
 
-  return <ProtectedRoute>{children}</ProtectedRoute>;
+  // return <ProtectedRoute>{children}</ProtectedRoute>;
+  return { children };
 }

@@ -1,14 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { getSupabaseClient } from '@/utils/supabase/client';
 
 type AuthContextType = {
   user: any;
   session: any;
-  supabase: ReturnType<typeof createClientComponentClient>;
+  supabase: ReturnType<typeof getSupabaseClient>;
   isLoading: boolean;
   signOut: () => Promise<void>;
 };
@@ -16,14 +16,14 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
   const [session, setSession] = useState<any>(null);
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClientComponentClient();
+  const supabase = getSupabaseClient();
   const router = useRouter();
 
+  // Check for existing session on mount
   useEffect(() => {
-    // Check for existing session
     const checkSession = async () => {
       try {
         const {
@@ -35,31 +35,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (existingSession) {
           setSession(existingSession);
           setUser(existingSession.user);
-
-          // Fetch user's workspace
-          const { data: workspaceUser } = await supabase
-            .schema('base')
-            .from('workspace_users')
-            .select(
-              `
-              workspace_id,
-              workspaces:workspace_id (
-                slug
-              )
-            `
-            )
-            .eq('user_id', existingSession.user.id)
-            .order('created_at', { ascending: true })
-            .limit(1)
-            .single();
-
-          if (workspaceUser?.workspaces?.slug) {
-            // Store workspace info in localStorage
-            localStorage.setItem(
-              'currentWorkspace',
-              workspaceUser.workspaces.slug
-            );
-          }
+          console.log('User (existingSession.user) :', existingSession.user); // Log user information
+          await fetchWorkspace(existingSession.user.id);
         }
       } catch (error) {
         console.error('Error checking session:', error);
@@ -70,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkSession();
 
-    // Set up auth state change listener
+    // Listen for auth state changes
     const {
       data: { subscription }
     } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
@@ -79,34 +56,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
+        console.log('User (currentSession.user) :', currentSession.user); // Log user information
 
         if (event === 'SIGNED_IN') {
-          try {
-            const { data: workspaceUser } = await supabase
-              .schema('base')
-              .from('workspace_users')
-              .select(
-                `
-                  workspace_id,
-                  workspaces:workspace_id (
-                    slug
-                  )
-                `
-              )
-              .eq('user_id', currentSession.user.id)
-              .order('created_at', { ascending: true })
-              .limit(1)
-              .single();
-
-            if (workspaceUser?.workspaces?.slug) {
-              const workspaceSlug = workspaceUser.workspaces.slug;
-              localStorage.setItem('currentWorkspace', workspaceSlug);
-              router.push(`/${workspaceSlug}/dashboard/overview`);
-              router.refresh();
-            }
-          } catch (error) {
-            console.error('Error fetching workspace:', error);
-            toast.error('Error accessing workspace');
+          await fetchWorkspace(currentSession.user.id);
+          const workspaceSlug = localStorage.getItem('currentWorkspace');
+          if (workspaceSlug) {
+            router.push(`/${workspaceSlug}/dashboard/overview`);
           }
         }
       } else {
@@ -117,19 +73,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [supabase, router]);
+
+  const fetchWorkspace = async (userId: string) => {
+    try {
+      const { data: workspaceUser, error } = await supabase
+        .schema('base')
+        .from('workspace_users')
+        .select(
+          `
+          workspace_id,
+          workspaces:workspace_id (
+            slug
+          )
+        `
+        )
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .single();
+
+      if (error) throw error;
+
+      if (workspaceUser?.workspaces?.slug) {
+        localStorage.setItem('currentWorkspace', workspaceUser.workspaces.slug);
+        console.log('Workspace:', workspaceUser.workspaces.slug); // Log workspace information
+      }
+    } catch (error) {
+      console.error('Error fetching workspace:', error);
+      toast.error('Error accessing workspace');
+    }
+  };
 
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      setUser(null);
+      setSession(null);
       localStorage.removeItem('currentWorkspace');
       router.push('/login');
     } catch (error) {
       console.error('Error signing out:', error);
-      toast.error('Error signing out');
     }
   };
 
@@ -144,8 +129,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }

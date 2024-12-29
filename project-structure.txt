@@ -1,0 +1,195 @@
+dmsaas
+├── .env.local
+├── .eslintrc.json
+├── .gitignore
+├── .prettierrc
+├── app
+│   ├── api
+│   │   └── auth
+│   │       └── user
+│   │           └── route.ts
+│   ├── contexts
+│   │   └── AuthContext.tsx
+│   ├── error
+│   │   └── page.tsx
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── login
+│   │   ├── (signin)
+│   │   │   └── page.tsx
+│   │   ├── actions.ts
+│   │   ├── page.tsx
+│   │   └── _components
+│   │       ├── signin-view.tsx
+│   │       └── user-auth-form.tsx
+│   ├── not-found.tsx
+│   ├── providers.tsx
+│   └── [workspaceSlug]
+│       ├── dashboard
+│       │   ├── employee
+│       │   │   ├── page.tsx
+│       │   │   ├── [employeeId]
+│       │   │   │   └── page.tsx
+│       │   │   └── _components
+│       │   │       ├── employee-form.tsx
+│       │   │       ├── employee-listing-page.tsx
+│       │   │       ├── employee-tables
+│       │   │       │   ├── cell-action.tsx
+│       │   │       │   ├── columns.tsx
+│       │   │       │   ├── index.tsx
+│       │   │       │   └── use-employee-table-filters.tsx
+│       │   │       └── employee-view-page.tsx
+│       │   ├── kanban
+│       │   │   ├── page.tsx
+│       │   │   └── _components
+│       │   │       ├── board-column.tsx
+│       │   │       ├── column-action.tsx
+│       │   │       ├── kanban-board.tsx
+│       │   │       ├── kanban-view-page.tsx
+│       │   │       ├── new-section-dialog.tsx
+│       │   │       ├── new-task-dialog.tsx
+│       │   │       └── task-card.tsx
+│       │   ├── layout.tsx
+│       │   ├── overview
+│       │   │   ├── page.tsx
+│       │   │   └── _components
+│       │   │       ├── area-graph.tsx
+│       │   │       ├── bar-graph.tsx
+│       │   │       ├── overview.tsx
+│       │   │       ├── pie-graph.tsx
+│       │   │       └── recent-sales.tsx
+│       │   ├── page.tsx
+│       │   ├── product
+│       │   │   ├── page.tsx
+│       │   │   ├── [productId]
+│       │   │   │   └── page.tsx
+│       │   │   └── _components
+│       │   │       ├── product-form.tsx
+│       │   │       ├── product-listing.tsx
+│       │   │       ├── product-tables
+│       │   │       │   ├── cell-action.tsx
+│       │   │       │   ├── columns.tsx
+│       │   │       │   ├── product-table-action.tsx
+│       │   │       │   └── use-product-table-filters.tsx
+│       │   │       └── product-view-page.tsx
+│       │   └── profile
+│       │       ├── page.tsx
+│       │       └── _components
+│       │           ├── profile-create-form.tsx
+│       │           └── profile-view-page.tsx
+│       └── layout.tsx
+├── components
+│   ├── breadcrumbs.tsx
+│   ├── date-range-picker.tsx
+│   ├── DmsLogo.tsx
+│   ├── file-uploader.tsx
+│   ├── form-card-skeleton.tsx
+│   ├── icons.tsx
+│   ├── kbar
+│   │   ├── index.tsx
+│   │   ├── render-result.tsx
+│   │   ├── result-item.tsx
+│   │   └── use-theme-switching.tsx
+│   ├── layout
+│   │   ├── app-sidebar.tsx
+│   │   ├── header.tsx
+│   │   ├── page-container.tsx
+│   │   ├── ThemeToggle
+│   │   │   ├── theme-provider.tsx
+│   │   │   └── theme-toggle.tsx
+│   │   └── user-nav.tsx
+│   ├── modal
+│   │   └── alert-modal.tsx
+│   ├── mode-toggle.tsx
+│   ├── nav-main.tsx
+│   ├── nav-projects.tsx
+│   ├── nav-user.tsx
+│   ├── ProtectedRoute.tsx
+│   ├── providers
+│   │   └── theme-provider.tsx
+│   ├── search-input.tsx
+│   ├── team-switcher.tsx
+│   └── ui
+│       ├── accordion.tsx
+│       ├── alert-dialog.tsx
+│       ├── alert.tsx
+│       ├── avatar.tsx
+│       ├── badge.tsx
+│       ├── breadcrumb.tsx
+│       ├── button.tsx
+│       ├── calendar.tsx
+│       ├── card.tsx
+│       ├── chart.tsx
+│       ├── checkbox.tsx
+│       ├── collapsible.tsx
+│       ├── command.tsx
+│       ├── dialog.tsx
+│       ├── dropdown-menu.tsx
+│       ├── form.tsx
+│       ├── heading.tsx
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── modal.tsx
+│       ├── popover.tsx
+│       ├── progress.tsx
+│       ├── radio-group.tsx
+│       ├── scroll-area.tsx
+│       ├── select.tsx
+│       ├── separator.tsx
+│       ├── sheet.tsx
+│       ├── sidebar.tsx
+│       ├── skeleton.tsx
+│       ├── slider.tsx
+│       ├── sonner.tsx
+│       ├── switch.tsx
+│       ├── table
+│       │   ├── data-table-filter-box.tsx
+│       │   ├── data-table-reset-filter.tsx
+│       │   ├── data-table-search.tsx
+│       │   ├── data-table-skeleton.tsx
+│       │   └── data-table.tsx
+│       ├── table.tsx
+│       ├── tabs.tsx
+│       ├── textarea.tsx
+│       └── tooltip.tsx
+├── components.json
+├── constants
+│   ├── data.ts
+│   └── mock-api.ts
+├── env.example.txt
+├── hooks
+│   ├── use-breadcrumbs.tsx
+│   ├── use-breakpoints.tsx
+│   ├── use-callback-ref.tsx
+│   ├── use-controllable-state.tsx
+│   ├── use-debounce.tsx
+│   ├── use-mobile.tsx
+│   └── use-multistep-form.tsx
+├── lib
+│   ├── form-schema.ts
+│   ├── menu-list.ts
+│   ├── searchparams.ts
+│   ├── store.ts
+│   └── utils.ts
+├── LICENSE
+├── next-env.d.ts
+├── next.config.js
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   ├── dms-brand-white.svg
+│   ├── next.svg
+│   └── vercel.svg
+├── README.md
+├── tailwind.config.js
+├── tsconfig.json
+├── types
+│   ├── index.ts
+│   └── next-auth.d.ts
+└── utils
+    └── supabase
+        ├── bak_server.ts
+        ├── client.ts
+        └── server.ts

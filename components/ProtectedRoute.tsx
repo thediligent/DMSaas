@@ -9,18 +9,19 @@ export default function ProtectedRoute({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, session } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isLoading && !session) {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+    console.log('protectedroute session:' + session);
+  }, [session, isLoading, router]);
 
   if (isLoading) {
     return <div>Loading...</div>; // Or your loading component
   }
 
-  return user ? <>{children}</> : null;
+  return session ? <>{children}</> : null;
 }

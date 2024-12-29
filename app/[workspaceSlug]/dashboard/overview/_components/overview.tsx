@@ -5,6 +5,7 @@ import { CalendarDateRangePicker } from '@/components/date-range-picker';
 import PageContainer from '@/components/layout/page-container';
 import { RecentSales } from './recent-sales';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/app/contexts/AuthContext';
 import {
   Card,
   CardContent,
@@ -14,13 +15,22 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function OverViewPage() {
+const OverViewPage = () => {
+  const { user, session } = useAuth();
+  console.log('User :', user);
+  console.log('Session:', session);
+
   return (
     <PageContainer scrollable>
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋
+            Hi, Welcome back 👋{' '}
+            {user ? (
+              <span>{user.email}</span>
+            ) : (
+              <p>Please log in to see your overview.</p>
+            )}
           </h2>
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
@@ -165,4 +175,6 @@ export default function OverViewPage() {
       </div>
     </PageContainer>
   );
-}
+};
+
+export default OverViewPage;
