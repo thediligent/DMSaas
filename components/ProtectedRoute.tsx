@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/contexts/AuthContext';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../app/contexts/AuthContext";
 
 export default function ProtectedRoute({
   children
@@ -14,9 +14,9 @@ export default function ProtectedRoute({
 
   useEffect(() => {
     if (!isLoading && !session) {
-      router.push('/login');
+      router.push("/login");
     }
-    console.log('protectedroute session:' + session);
+    console.log("protectedroute session:" + session);
   }, [session, isLoading, router]);
 
   if (isLoading) {

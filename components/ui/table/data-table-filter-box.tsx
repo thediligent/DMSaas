@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -10,18 +10,18 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-} from '@/components/ui/popover';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
-import { PlusCircledIcon } from '@radix-ui/react-icons';
-import { CheckIcon } from 'lucide-react';
-import { Options } from 'nuqs';
-import React from 'react';
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "/lib/utils";
+import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { CheckIcon } from "lucide-react";
+import { Options } from "nuqs";
+import React from "react";
 
 interface FilterOption {
   value: string;
@@ -49,8 +49,8 @@ export function DataTableFilterBox({
 }: FilterBoxProps) {
   const selectedValuesSet = React.useMemo(() => {
     if (!filterValue) return new Set<string>();
-    const values = filterValue.split('.');
-    return new Set(values.filter((value) => value !== ''));
+    const values = filterValue.split(".");
+    return new Set(values.filter((value) => value !== ""));
   }, [filterValue]);
 
   const handleSelect = (value: string) => {
@@ -60,7 +60,7 @@ export function DataTableFilterBox({
     } else {
       newSet.add(value);
     }
-    setFilterValue(Array.from(newSet).join('.') || null);
+    setFilterValue(Array.from(newSet).join(".") || null);
   };
 
   const resetFilter = () => setFilterValue(null);
@@ -118,10 +118,10 @@ export function DataTableFilterBox({
                 >
                   <div
                     className={cn(
-                      'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                       selectedValuesSet.has(option.value)
-                        ? 'bg-primary text-primary-foreground'
-                        : 'opacity-50 [&_svg]:invisible'
+                        ? "bg-primary text-primary-foreground"
+                        : "opacity-50 [&_svg]:invisible"
                     )}
                   >
                     <CheckIcon className="h-4 w-4" aria-hidden="true" />

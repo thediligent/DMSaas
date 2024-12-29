@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import { getSupabaseClient } from '@/utils/supabase/client';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { getSupabaseClient } from "../../utils/supabase/client";
 
 type AuthContextType = {
   user: any;
@@ -35,12 +35,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (existingSession) {
           setSession(existingSession);
           setUser(existingSession.user);
-          console.log('User (existingSession.user) :', existingSession.user); // Log user information
-          console.log('Session on login:', existingSession); // Log session
+          console.log("User (existingSession.user) :", existingSession.user); // Log user information
+          console.log("Session on login:", existingSession); // Log session
           await fetchWorkspace(existingSession.user.id);
+          localStorage.setItem(
+            "currentWorkspace",
+            existingSession.user.workspaces
+          );
         }
       } catch (error) {
-        console.error('Error checking session:', error);
+        console.error("Error checking session:", error);
       } finally {
         setIsLoading(false);
       }
@@ -51,34 +55,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth state changes
     const {
       data: { subscription }
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log('Auth state changed:', event);
+    } = supabase.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, currentSession: Session | null) => {
+        console.log("Auth state changed:", event);
 
-      if (currentSession) {
-        setSession(currentSession);
-        setUser(currentSession.user);
-        localStorage.setItem(
-          'currentWorkspace',
-          currentSession.user.workspaces.slug
-        );
-        console.log('User (currentSession.user) :', currentSession.user); // Log user information
-        // Fetch workspace when user signs in
-        await fetchWorkspace(currentSession.user.id); // Pass user ID here as well
-
-        const workspaceSlug = localStorage.getItem('currentWorkspace');
-        if (workspaceSlug) {
-          console.log('Redirecting to workspace:', workspaceSlug);
-          router.push(`/${workspaceSlug}/dashboard/overview`);
+        if (currentSession) {
+          setSession(currentSession);
+          setUser(currentSession.user);
+          // Fetch workspace when user signs in
+          await fetchWorkspace(currentSession.user.id);
         } else {
-          console.error('No workspace found in local storage');
+          setSession(null);
+          localStorage.removeItem("currentWorkspace");
+          setUser(null);
+          router.push("/login");
         }
-      } else {
-        setSession(null);
-        localStorage.removeItem('currentWorkspace');
-        setUser(null);
-        router.push('/login');
       }
-    });
+    );
 
     return () => subscription.unsubscribe();
   }, [supabase, router]);
@@ -86,41 +79,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchWorkspace = async (userId: string) => {
     try {
       const { data: workspaces, error } = await supabase
-        .schema('base')
-        .from('workspace_users')
+        .schema("base")
+        .from("workspace_users")
         .select(
           `
-            workspace_id,
             workspaces:workspace_id (name, slug)
           `
         )
-        .eq('user_id', userId);
+        .eq("user_id", userId);
 
+      console.log("Fetched workspaces:", workspaces);
       if (error) throw error;
-
       // Check if workspaces array is returned and has items
       if (workspaces && workspaces.length > 0) {
         // Store all workspaces in local storage
-        localStorage.setItem('userWorkspaces', JSON.stringify(workspaces));
+        localStorage.setItem("userWorkspaces", JSON.stringify(workspaces));
 
         // Select the first workspace and store its slug
         const firstWorkspace = workspaces[0].workspaces; // Ensure this is defined
 
         if (firstWorkspace && firstWorkspace.slug) {
-          localStorage.setItem('currentWorkspace', firstWorkspace.slug);
-          console.log('Selected Workspace:', firstWorkspace.slug); // Log workspace information
-
-          // Optionally redirect to the dashboard overview for the first workspace
+          localStorage.setItem("currentWorkspace", firstWorkspace.slug);
+          console.log("Selected Workspace:", firstWorkspace.slug); // Log workspace information
+          console.log("Redirecting to workspace:", firstWorkspace.slug);
           router.push(`/${firstWorkspace.slug}/dashboard/overview`);
         } else {
-          console.error('First workspace or slug is undefined');
+          console.error("First workspace or slug is undefined");
         }
       } else {
-        console.error('No workspaces found for user');
+        console.error("No workspaces found for user");
       }
     } catch (error) {
-      console.error('Error fetching workspace:', error);
-      toast.error('Error accessing workspace');
+      console.error("Error fetching workspace:", error);
+      toast.error("Error accessing workspace");
     }
   };
 
@@ -129,10 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
-      localStorage.removeItem('currentWorkspace');
-      router.push('/login');
+      localStorage.removeItem("currentWorkspace");
+      router.push("/login");
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   };
 
@@ -147,6 +138,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }

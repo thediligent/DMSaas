@@ -1,32 +1,36 @@
-'use client';
-import { AreaGraph } from './area-graph';
-import { BarGraph } from './bar-graph';
-import { PieGraph } from './pie-graph';
-import { CalendarDateRangePicker } from '@/components/date-range-picker';
-import PageContainer from '@/components/layout/page-container';
-import { RecentSales } from './recent-sales';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/app/contexts/AuthContext';
+"use client";
+import { AreaGraph } from "./area-graph";
+import { BarGraph } from "./bar-graph";
+import { PieGraph } from "./pie-graph";
+import { CalendarDateRangePicker } from "components/date-range-picker";
+import PageContainer from "components/layout/page-container";
+import { RecentSales } from "./recent-sales";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "app/contexts/AuthContext";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs";
 
-const OverViewPage = () => {
+interface OverviewPageProps {
+  workspaceSlug: string | string[];
+}
+
+const OverViewPage = ({ workspaceSlug }: OverviewPageProps) => {
   const { user, session } = useAuth();
-  console.log('User :', user);
-  console.log('Session:', session);
+  console.log("User :", user);
+  console.log("Session:", session);
 
   return (
     <PageContainer scrollable>
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋{' '}
+            Hi, Welcome back 👋{" "}
             {user ? (
               <span>{user.email}</span>
             ) : (
