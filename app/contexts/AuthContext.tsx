@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getSupabaseClient } from "../../utils/supabase/client";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
 type AuthContextType = {
   user: any;
@@ -101,7 +102,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (firstWorkspace && firstWorkspace.slug) {
           localStorage.setItem("currentWorkspace", firstWorkspace.slug);
           console.log("Selected Workspace:", firstWorkspace.slug); // Log workspace information
-          console.log("Redirecting to workspace:", firstWorkspace.slug);
+          console.log(
+            "Redirecting to workspace:",
+            firstWorkspace.slug + "/dashboard/overview"
+          );
           router.push(`/${firstWorkspace.slug}/dashboard/overview`);
         } else {
           console.error("First workspace or slug is undefined");
