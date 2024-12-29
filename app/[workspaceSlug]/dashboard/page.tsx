@@ -39,6 +39,7 @@ export default function Dashboard() {
     };
 
     if (!isLoading) {
+      console.log('Session in Dashboard:', session); // Log session state
       fetchWorkspace();
     }
   }, [session, isLoading, router]);

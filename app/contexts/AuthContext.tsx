@@ -36,6 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(existingSession);
           setUser(existingSession.user);
           console.log('User (existingSession.user) :', existingSession.user); // Log user information
+          console.log('Session on login:', existingSession); // Log session
           await fetchWorkspace(existingSession.user.id);
         }
       } catch (error) {
@@ -56,19 +57,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
+        localStorage.setItem(
+          'currentWorkspace',
+          currentSession.user.workspaces.slug
+        );
         console.log('User (currentSession.user) :', currentSession.user); // Log user information
+        // Fetch workspace when user signs in
+        await fetchWorkspace(currentSession.user.id); // Pass user ID here as well
 
-        if (event === 'SIGNED_IN') {
-          await fetchWorkspace(currentSession.user.id);
-          const workspaceSlug = localStorage.getItem('currentWorkspace');
-          if (workspaceSlug) {
-            router.push(`/${workspaceSlug}/dashboard/overview`);
-          }
+        const workspaceSlug = localStorage.getItem('currentWorkspace');
+        if (workspaceSlug) {
+          console.log('Redirecting to workspace:', workspaceSlug);
+          router.push(`/${workspaceSlug}/dashboard/overview`);
+        } else {
+          console.error('No workspace found in local storage');
         }
       } else {
         setSession(null);
-        setUser(null);
         localStorage.removeItem('currentWorkspace');
+        setUser(null);
         router.push('/login');
       }
     });
@@ -78,27 +85,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchWorkspace = async (userId: string) => {
     try {
-      const { data: workspaceUser, error } = await supabase
+      const { data: workspaces, error } = await supabase
         .schema('base')
         .from('workspace_users')
         .select(
           `
-          workspace_id,
-          workspaces:workspace_id (
-            slug
-          )
-        `
+            workspace_id,
+            workspaces:workspace_id (name, slug)
+          `
         )
-        .eq('user_id', userId)
-        .order('created_at', { ascending: true })
-        .limit(1)
-        .single();
+        .eq('user_id', userId);
 
       if (error) throw error;
 
-      if (workspaceUser?.workspaces?.slug) {
-        localStorage.setItem('currentWorkspace', workspaceUser.workspaces.slug);
-        console.log('Workspace:', workspaceUser.workspaces.slug); // Log workspace information
+      // Check if workspaces array is returned and has items
+      if (workspaces && workspaces.length > 0) {
+        // Store all workspaces in local storage
+        localStorage.setItem('userWorkspaces', JSON.stringify(workspaces));
+
+        // Select the first workspace and store its slug
+        const firstWorkspace = workspaces[0].workspaces; // Ensure this is defined
+
+        if (firstWorkspace && firstWorkspace.slug) {
+          localStorage.setItem('currentWorkspace', firstWorkspace.slug);
+          console.log('Selected Workspace:', firstWorkspace.slug); // Log workspace information
+
+          // Optionally redirect to the dashboard overview for the first workspace
+          router.push(`/${firstWorkspace.slug}/dashboard/overview`);
+        } else {
+          console.error('First workspace or slug is undefined');
+        }
+      } else {
+        console.error('No workspaces found for user');
       }
     } catch (error) {
       console.error('Error fetching workspace:', error);

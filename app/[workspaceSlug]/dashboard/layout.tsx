@@ -11,18 +11,18 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <ProtectedRoute>
-    <KBar>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <Header />
-          {/* page main content */}
-          {children}
-          {/* page main content ends */}
-        </SidebarInset>
-      </SidebarProvider>
-    </KBar>
-    // </ProtectedRoute>
+    <ProtectedRoute>
+      <KBar>
+        <SidebarProvider>
+          <AppSidebar />
+          <SidebarInset>
+            <Header />
+            {/* page main content */}
+            {children}
+            {/* page main content ends */}
+          </SidebarInset>
+        </SidebarProvider>
+      </KBar>
+    </ProtectedRoute>
   );
 }
