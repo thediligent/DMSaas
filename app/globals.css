@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -159,25 +159,33 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  :root {
+    --color-chrome: hsl(var(--chart-1));
+    --color-safari: hsl(var(--chart-2));
+    --color-firefox: hsl(var(--chart-3));
+    --color-edge: hsl(var(--chart-4));
+    --color-other: hsl(var(--chart-5));
+  }
 }
 h1,
 h2,
 h3 {
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
-.sidebar[data-collapsed='true'] .collapse-hide {
+.sidebar[data-collapsed="true"] .collapse-hide {
   display: none;
 }
 
-.sidebar[data-collapsed='true'] button {
+.sidebar[data-collapsed="true"] button {
   justify-content: center;
   padding: 0.5rem;
 }
 
-.sidebar[data-collapsed='true'] .size-8 {
+.sidebar[data-collapsed="true"] .size-8 {
   width: 2rem;
   height: 2rem;
 }

@@ -3,7 +3,7 @@
 import { useAuth } from "../../../contexts/AuthContext";
 import OverViewPage from "./_components/overview";
 import { useParams } from "next/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "components/ui/skeleton";
 
 export default function Page() {
   const { session, isLoading } = useAuth();
