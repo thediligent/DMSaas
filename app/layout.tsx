@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import NextTopLoader from "nextjs-toploader";
 import { AuthProvider } from "./contexts/AuthContext";
+import ClientLayout from "./client-layout";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,8 +33,10 @@ export default async function RootLayout({
       <body className={"overflow-hidden"}>
         <NextTopLoader showSpinner={false} />
         <AuthProvider>
-          <Toaster />
-          {children}
+          <ClientLayout>
+            <Toaster />
+            {children}
+          </ClientLayout>
         </AuthProvider>
       </body>
     </html>

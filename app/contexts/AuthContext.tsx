@@ -146,8 +146,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .from("workspace_users")
         .select(
           `
-              workspaces:workspace_id (name, slug)
-            `
+          workspace_id,
+          workspaces:workspace_id (name, slug)
+        `
         )
         .eq("user_id", userId);
 

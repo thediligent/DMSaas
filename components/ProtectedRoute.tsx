@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../app/contexts/AuthContext";
 import { toast } from "sonner";
+import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
 export default function ProtectedRoute({
   children
@@ -16,32 +17,62 @@ export default function ProtectedRoute({
   const [hasSession, setHasSession] = useState(false);
 
   useEffect(() => {
-    if (!isLoading) {
+    let isMounted = true;
+
+    const checkSession = () => {
+      if (!isMounted) return;
+
       if (session) {
         setHasSession(true);
         setInitialCheckComplete(true);
-      } else {
-        console.log("No session found, checking localStorage for token");
-        const sessionToken = localStorage.getItem("authjs.session-token");
-
-        if (sessionToken) {
-          console.log("Session token found, waiting for session refresh");
-          // Wait a bit longer for session refresh
-          setTimeout(() => {
-            if (!session) {
-              console.log("Session refresh failed, redirecting to login");
-              toast.error("Session expired, please login again");
-              router.push("/login");
-            }
-          }, 1000);
-        } else {
-          console.log("No session token found, redirecting to login");
-          router.push("/login");
-        }
-        setInitialCheckComplete(true);
+        return;
       }
-    }
-  }, [session, isLoading, router]);
+
+      const sessionToken = localStorage.getItem("authjs.session-token");
+
+      if (sessionToken) {
+        setHasSession(true);
+      } else {
+        router.push("/login");
+      }
+
+      setInitialCheckComplete(true);
+    };
+
+    // Check session immediately
+    checkSession();
+
+    // Also check after a short delay to catch any async updates
+    const timeout = setTimeout(() => {
+      checkSession();
+    }, 100);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
+  }, [session, router]);
+
+  const { supabase } = useAuth();
+
+  // Listen for auth state changes
+  useEffect(() => {
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        if (session) {
+          setHasSession(true);
+        } else {
+          setHasSession(false);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   if (isLoading || !initialCheckComplete) {
     return <div>Loading...</div>;
