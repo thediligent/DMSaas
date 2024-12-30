@@ -30,6 +30,7 @@ import {
   SidebarRail
 } from "components/ui/sidebar";
 import { navItems } from "constants/data";
+import { useAuth } from "app/contexts/AuthContext";
 
 interface NavItem {
   title: string;
@@ -55,6 +56,14 @@ import { Icons } from "../icons";
 import { DmsLogo } from "components/DmsLogo";
 import { User } from "@supabase/supabase-js";
 
+interface Workspace {
+  workspace_id: string;
+  workspaces: {
+    name: string;
+    slug: string;
+  }[];
+}
+
 export const company = {
   name: "DMS",
   logo: DmsLogo
@@ -62,7 +71,45 @@ export const company = {
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const user: User | null = null;
+  const { supabase, user } = useAuth();
+  const [workspaces, setWorkspaces] = React.useState<Workspace[]>([]);
+  const [currentWorkspace, setCurrentWorkspace] =
+    React.useState<Workspace | null>(null);
+
+  React.useEffect(() => {
+    const fetchWorkspaces = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("workspaces")
+          .select("workspace_id, workspaces (name, slug)");
+
+        if (error) throw error;
+        setWorkspaces(data);
+
+        // Set current workspace based on URL
+        const workspaceSlug = pathname.split("/")[1];
+        const current =
+          data.find((w: Workspace) =>
+            w.workspaces.some((ws) => ws.slug === workspaceSlug)
+          ) || null;
+        setCurrentWorkspace(current);
+      } catch (error) {
+        console.error("Error fetching workspaces:", error);
+      }
+    };
+
+    if (user) {
+      fetchWorkspaces();
+    }
+  }, [user, pathname, supabase]);
+
+  const handleWorkspaceChange = (workspace: Workspace) => {
+    const newPath = pathname.replace(
+      /^\/[^\/]+/,
+      `/${workspace.workspaces[0].slug}`
+    );
+    window.location.href = newPath;
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -91,30 +138,17 @@ export default function AppSidebar() {
               Pinned Workspaces
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Diligent Marketing Solutions
-              <span className="ml-auto text-xs tracking-widest opacity-60">
-                ⌘1
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Daniel Tinajero
-              <span className="ml-auto text-xs tracking-widest opacity-60">
-                ⌘2
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Tinajero Studios 3D
-              <span className="ml-auto text-xs tracking-widest opacity-60">
-                ⌘3
-              </span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              View Workspaces
-              <span className="ml-auto text-xs tracking-widest opacity-60">
-                ⌘+home
-              </span>
-            </DropdownMenuItem>
+            {workspaces.map((workspace, index) => (
+              <DropdownMenuItem
+                key={workspace.workspace_id}
+                onClick={() => handleWorkspaceChange(workspace)}
+              >
+                {workspace.workspaces[0].name}
+                <span className="ml-auto text-xs tracking-widest opacity-60">
+                  ⌘{index + 1}
+                </span>
+              </DropdownMenuItem>
+            ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
