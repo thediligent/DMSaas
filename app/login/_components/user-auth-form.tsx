@@ -141,7 +141,7 @@ export default function UserAuthForm() {
   }, [supabase, router]);
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       <Auth
         supabaseClient={supabase}
         appearance={{ theme: ThemeSupa }}

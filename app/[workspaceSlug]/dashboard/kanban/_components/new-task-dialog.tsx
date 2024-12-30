@@ -1,19 +1,11 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-
-import { useTaskStore } from '@/lib/store';
+import { Button } from "components/ui/button";
+import { Dialog, DialogFooter, DialogTrigger } from "components/ui/dialog";
+import { DialogWrapper } from "components/ui/dialog-wrapper";
+import { Input } from "components/ui/input";
+import { Textarea } from "components/ui/textarea";
+import { useTaskStore } from "lib/store";
 
 export default function NewTaskDialog() {
   const addTask = useTaskStore((state) => state.addTask);
@@ -25,7 +17,7 @@ export default function NewTaskDialog() {
     const formData = new FormData(form);
     const { title, description } = Object.fromEntries(formData);
 
-    if (typeof title !== 'string' || typeof description !== 'string') return;
+    if (typeof title !== "string" || typeof description !== "string") return;
     addTask(title, description);
   };
 
@@ -36,13 +28,11 @@ export default function NewTaskDialog() {
           ＋ Add New Todo
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add New Todo</DialogTitle>
-          <DialogDescription>
-            What do you want to get done today?
-          </DialogDescription>
-        </DialogHeader>
+      <DialogWrapper
+        title="Add New Todo"
+        description="What do you want to get done today?"
+        className="sm:max-w-[425px]"
+      >
         <form
           id="todo-form"
           className="grid gap-4 py-4"
@@ -72,7 +62,7 @@ export default function NewTaskDialog() {
             </Button>
           </DialogTrigger>
         </DialogFooter>
-      </DialogContent>
+      </DialogWrapper>
     </Dialog>
   );
 }
