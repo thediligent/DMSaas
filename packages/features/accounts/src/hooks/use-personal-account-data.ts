@@ -20,6 +20,18 @@ export function usePersonalAccountData(
       return null;
     }
 
+    // First get the user's account through memberships
+    const membershipResponse = await client
+      .from('accounts_memberships')
+      .select('account_id')
+      .eq('user_id', userId)
+      .single();
+
+    if (membershipResponse.error) {
+      throw membershipResponse.error;
+    }
+
+    // Then get the account details
     const response = await client
       .from('accounts')
       .select(
@@ -27,9 +39,9 @@ export function usePersonalAccountData(
         id,
         name,
         picture_url
-    `,
+      `,
       )
-      .eq('id', userId)
+      .eq('id', membershipResponse.data.account_id)
       .single();
 
     if (response.error) {

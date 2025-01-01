@@ -124,13 +124,16 @@ function UploadProfileAvatarForm(props: {
 
 function deleteProfilePhoto(client: SupabaseClient<Database>, url: string) {
   const bucket = client.storage.from(AVATARS_BUCKET);
-  const fileName = url.split('/').pop()?.split('?')[0];
+  // Extract path after the bucket name in the URL
+  const regex = new RegExp(`${AVATARS_BUCKET}/(.+?)(?:\\?|$)`);
+  const match = regex.exec(url);
+  const filePath = match?.[1];
 
-  if (!fileName) {
+  if (!filePath) {
     return;
   }
 
-  return bucket.remove([fileName]);
+  return bucket.remove([filePath]);
 }
 
 async function uploadUserProfilePhoto(
@@ -143,10 +146,15 @@ async function uploadUserProfilePhoto(
   const extension = photoFile.name.split('.').pop();
   const fileName = await getAvatarFileName(userId, extension);
 
-  const result = await bucket.upload(fileName, bytes);
+  const result = await bucket.upload(fileName, bytes, {
+    cacheControl: '3600',
+    upsert: true
+  });
 
   if (!result.error) {
-    return bucket.getPublicUrl(fileName).data.publicUrl;
+    const { data: { publicUrl } } = bucket.getPublicUrl(fileName);
+    // Add a cache-busting query parameter to the URL
+    return `${publicUrl}?v=${Date.now()}`;
   }
 
   throw result.error;
@@ -157,10 +165,8 @@ async function getAvatarFileName(
   extension: string | undefined,
 ) {
   const { nanoid } = await import('nanoid');
-
-  // we add a version to the URL to ensure
-  // the browser always fetches the latest image
   const uniqueId = nanoid(16);
-
-  return `${userId}.${extension}?v=${uniqueId}`;
+  
+  // Ensure the file is in the account_image folder to match storage policy
+  return `account_image/${userId}-${uniqueId}.${extension}`;
 }
